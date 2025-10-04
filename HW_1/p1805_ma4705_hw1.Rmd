@@ -1,0 +1,46 @@
+---
+title: "p1805_ma4705_hw1"
+output: github_document
+date: "2025-10-03"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library("moderndive")
+```
+
+## Problem 1
+* Load early January weather data.
+```{r load_data}
+data("early_january_weather")
+```
+* Create scatterplot.
+```{r scatterplot}
+ggplot(early_january_weather, aes(x = time_hour, y = temp, color = humid)) + 
+  geom_point()
+```
+
+## Problem 2
+* Create data frame.
+```{r data_frame}
+df = tibble(
+  samp = rnorm(10),
+  log_vec = samp > 0,
+  char_vec = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "j"),
+  factor_vec = factor(c("low", "low", "low", "mod", "mod", "mod", "mod", "high", "high", "high"))
+  )
+```
+* Attempt to calculate mean.
+```{r mean}
+mean(pull(df, log_vec))
+mean(pull(df, char_vec))
+mean(pull(df, factor_vec))
+```
+* Attempt to convert data points to numeric.
+```{r convert_numeric, results='hide', warning=FALSE}
+as.numeric(pull(df, samp))
+as.numeric(pull(df, log_vec))
+as.numeric(pull(df, char_vec))
+as.numeric(pull(df, factor_vec))
+```
