@@ -6,24 +6,53 @@ date: "2025-10-04"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
-## R Markdown
+# Problem 1
+* clean pols-month data
+```{r pols_month}
+pols_month_df <- read_csv("./datasets/pols-month.csv") |>
+  janitor::clean_names() |>
+  separate(mon, c("year", "month", "day"), sep = "-") |>
+  mutate(year = substr(year, 3, 4), month = month.name[as.numeric(month)],
+         president = factor(prez_gop, levels = c(0, 1), labels = c("dem", "gop"))) |>
+  select(-day, -prez_gop, -prez_dem) |>
+  relocate(year, month, president)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+pols_month_df
+```
+* clean snp data
+```{r snp}
+snp_df <- read_csv("./datasets/snp.csv") |>
+  janitor::clean_names() |>
+  separate(date, c("month", "day", "year"), sep = "/") |>
+  mutate(month = month.name[as.numeric(month)]) |>
+  select(-day) |>
+  relocate(year, month)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+snp_df
+```
+* clean unemployment data
+```{r unemployment}
+unemployment_df <- read_csv("./datasets/unemployment.csv") |>
+  pivot_longer(Jan:Dec, names_to = "month", values_to = "unempl_perc") |>
+  mutate(month = as.character(factor(month, levels = month.abb, labels = month.name))) |>
+  janitor::clean_names() |>
+  mutate(year = substr(as.character(year), 3, 4))
 
-```{r cars}
-summary(cars)
+unemployment_df
+```
+* merge pols-month and snp data
+```{r merge_pols_snp}
+pols_snp_df = left_join(pols_month_df, snp_df)
+pols_snp_df
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+* merge with unemployment data
+```{r merge_unemployment}
+pols_snp_unemp_df = left_join(pols_snp_df, unemployment_df) |> select(year, month, president, close, unempl_perc)
+pols_snp_unemp_df
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Problem 2
+# Problem 3
