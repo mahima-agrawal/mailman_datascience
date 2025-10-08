@@ -7,6 +7,7 @@ date: "2025-10-04"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(readxl)
 ```
 
 # Problem 1
@@ -55,4 +56,24 @@ pols_snp_unemp_df = left_join(pols_snp_df, unemployment_df) |> select(year, mont
 pols_snp_unemp_df
 ```
 # Problem 2
+```{r mrtrashweel}
+mrtrashweel_df = read_excel("./datasets/202509 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel") |>
+  janitor::clean_names() |>
+  drop_na(dumpster) |>
+  mutate(year = as.numeric(year), sports_balls = round(sports_balls), trash_wheel = "MTW", trash_wheel = factor(trash_wheel, levels = c("MTW", "GF"), labels= c("Mr. Trash Wheel", "Gwynns Falls")))
+
+mrtrashweel_df
+```
+```{r gwynn_falls_trashweel}
+gftrashwheel_df = read_excel("./datasets/202509 Trash Wheel Collection Data.xlsx", sheet = "Gwynns Falls Trash Wheel") |>
+  janitor::clean_names() |>
+  drop_na(dumpster) |>
+  mutate(trash_wheel = "GF", trash_wheel = factor(trash_wheel, levels = c("MTW", "GF"), labels= c("Mr. Trash Wheel", "Gwynns Falls")))
+
+gftrashwheel_df
+```
+```{r combined trashwheel_df}
+trashwheel_df = left_join(mrtrashweel_df, gftrashwheel_df)
+trashwheel_df
+```
 # Problem 3
