@@ -85,3 +85,23 @@ trashwheel_df = bind_rows(mrtrashweel_df, proftrashwheel_df, gftrashwheel_df)
 trashwheel_df
 ```
 # Problem 3
+```{r zip_codes}
+zipcodes_df = read_csv("./datasets/Zip Codes.csv") |>
+  janitor::clean_names() |>
+  mutate(county = paste(county, "County"))
+  
+zipcodes_df
+```
+```{r zori}
+zori_df = read_csv("./datasets/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv") |>
+  janitor::clean_names() |>
+  mutate(zip_code = region_name, county = county_name) |>
+  select(-region_name, -region_type, -county_name)
+
+zori_df
+```
+```{r combine_zori_zip}
+zori_zip_df = left_join(zipcodes_df, zori_df, by = "zip_code")
+
+zori_zip_df
+```
